@@ -5,9 +5,11 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser')
 const logger = require('morgan');
 const cors = require('cors')
+const passport = require('passport')
 
-const indexRouter = require('./routes/index'); //引入api路由
-const profileRouter = require('./routes/profile'); //引入api路由
+// 引入api路由
+const indexRouter = require('./routes/index'); 
+const profileRouter = require('./routes/profiles'); 
 const usersRouter = require('./routes/users');
 const dbs = require('./config/db') // 引入数据库
 const app = express();
@@ -16,15 +18,14 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.set('secret', 'iuie4lk96ff0')
-
 app.use(logger('dev'));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(passport.initialize())
+require('./config/passport')(passport);
 
 // 引入api
 // require('./routes/profile')(app)
@@ -32,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 使用routers
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/profile', profileRouter);
+app.use('/api/profiles', profileRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
